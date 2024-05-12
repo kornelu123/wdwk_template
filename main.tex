@@ -1,0 +1,141 @@
+\documentclass{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage{titlesec}
+\usepackage[T1]{fontenc}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{color}
+\usepackage{tikz}
+\usepackage{graphicx}
+
+\definecolor{mGreen}{rgb}{0,0.6,0}
+\definecolor{mGray}{rgb}{0.5,0.5,0.5}
+\definecolor{mPurple}{rgb}{0.58,0,0.82}
+\definecolor{backgroundColour}{rgb}{0.95,0.95,0.92}
+
+\lstdefinestyle{CStyle}{
+  backgroundcolor=\color{backgroundColour},   
+  commentstyle=\color{mGreen},
+  keywordstyle=\color{magenta},
+  numberstyle=\tiny\color{mGray},
+  stringstyle=\color{mPurple},
+  basicstyle=\footnotesize,
+  breakatwhitespace=false,         
+  breaklines=true,                 
+  captionpos=b,                    
+  keepspaces=true,                 
+  numbers=left,                    
+  numbersep=5pt,                  
+  showspaces=false,                
+  showstringspaces=false,
+  showtabs=false,                  
+  tabsize=2,
+  language=C
+}
+
+\lstdefinestyle{customasm}{
+  backgroundcolor=\color{backgroundColour},   
+  commentstyle=\color{mGreen},
+  keywordstyle=\color{magenta},
+  numberstyle=\tiny\color{mGray},
+  stringstyle=\color{mPurple},
+  basicstyle=\footnotesize,
+  breakatwhitespace=false,         
+  breaklines=true,                 
+  captionpos=b,                    
+  keepspaces=true,                 
+  numbers=left,                    
+  numbersep=5pt,                  
+  showspaces=false,                
+  showstringspaces=false,
+  showtabs=false,                  
+  tabsize=2,
+  language=[x86masm]Assembler,
+}
+
+\lstdefinestyle{bash}{
+  backgroundcolor=\color{backgroundColour},   
+  commentstyle=\color{mGreen},
+  keywordstyle=\color{magenta},
+  numberstyle=\tiny\color{mGray},
+  stringstyle=\color{mPurple},
+  basicstyle=\footnotesize,
+  breakatwhitespace=false,         
+  breaklines=true,                 
+  captionpos=b,                    
+  keepspaces=true,                 
+  numbers=left,                    
+  numbersep=5pt,                  
+  showspaces=false,                
+  showstringspaces=false,
+  showtabs=false,                  
+  tabsize=2,
+  language=bash
+}
+
+\lstdefinestyle{make}{
+  backgroundcolor=\color{backgroundColour},   
+  commentstyle=\color{mGreen},
+  keywordstyle=\color{magenta},
+  numberstyle=\tiny\color{mGray},
+  stringstyle=\color{mPurple},
+  basicstyle=\footnotesize,
+  breakatwhitespace=false,         
+  breaklines=true,                 
+  captionpos=b,                    
+  keepspaces=true,                 
+  numbers=left,                    
+  numbersep=5pt,                  
+  showspaces=false,                
+  showstringspaces=false,
+  showtabs=false,                  
+  tabsize=2,
+  language=make
+}
+
+\titleformat{\section}{\normalfont\Large\bfseries}{\thesection}{1em}{}
+\titleformat{\subsection}{\normalfont\large\bfseries}{\thesubsection}{1em}{}
+
+\renewcommand{\contentsname}{Spis treści}
+
+\begin{document}
+
+\title{Sprawozdanie z laboratorium przedmiotu "Wstęp do wysokowydajnych komputerów"
+\large{Badanie wydajności programów}
+}
+\author{Kornel Uriasz 272967 ITE 2022/2026}
+\date{26 Kwietnia 2024}
+\maketitle
+\newpage
+
+\tableofcontents
+
+\newpage
+
+\section{Cel ćwiczenia}
+
+Celem ćwiczenia było zapoznanie się z metodami pomiaru długości trwania programów 
+napisanych w języku asemblera na platformie \verb|Linux/x86|.
+Zgodnie z przekazanymi wymaganiami w ramach laboratoriów mieliśmy wykonać następujące zagadnienia:
+
+\begin{enumerate}
+  \item Przetworzenie kodu z poprzednich laboratoriów, generującego n-tą liczbe fibonacciego aby był zgodny z \verb|ABI języka C| i zwracał
+    ilość taktowań potrzebną na wykonanie programu, poprzez użycie instrukcji \verb|sdtrc|.
+  \item Wielokrotny pomiar czasu wykonania programu dla różnych argumentów wejściowych, ze sprawdzaniem poprawności działań.
+  \item Optymalizacja kodu na podstawie wyników pomiarów, z użyciem programu \verb|perf|.
+\end{enumerate}
+
+Dwa pierwsze zagadnienia zostały zrealizowane na zajęciach, zgodnie z wymaganiami prowadzącego poprzez stworzenie
+funkcji głównej programu w pliku \verb|main.c|, oraz przerobienie kodu z ostatnich zajęć w pliku \verb|fibonacci.s|.
+Program był wywoływany 25 razy przez plik skryptowy języka powłoki systemowej \verb|test.sh|, dane wejściowe były przekazywane poprzez
+przekierowanie plików testowych (f3000.in, f10000.in) do standardowego strumienia wejścia. Dane wyjściowe były przez skrypt porównywane
+z wzorcowymi danami wyjściowymi programem \verb|diff|. Czasy wykonania funkcji przez program głowny zostały zapisane do plików times\_fxxx.txt.
+
+Podczas zajęć został też zrealizowany częściowo podpunkt 3. Częściowe wykonanie polegało na wygenerowaniu pliku \verb|perf.data| przy użyciu
+komendy \verb|perf record xxxx|.
+
+Zadanie było realizowane na prywatnym laptopie, model procesora : \verb|Intel Core i5-1035G1 @ 1.00GHz|.
+Została użyta maszyna wirtualna xubuntu dostępna na eportalu, zasoby to : 4 wątki, 4GB pamięci RAM.
+\newpage
+\section{Przebieg ćwiczenia}
